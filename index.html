@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width">
+    <title>在线导出图片</title>
+    <meta name="viewport" content="width=640, user-scalable=no, target-densitydpi=device-dpi">
+    <link rel="stylesheet" href="./css/index.css">
+  </head>
+  <body>
+    <div class="body">
+      
+      <div class="ruler"></div>
+      <div class="eidt-tools left">
+        备注：分享人|分享主题|分享子标题|2018年4月11日/周三/15:00-18:00<br />
+        往期分享：
+        <ul id="shareList"></ul>
+      </div>
+      <div class="right">
+        <p>
+          <input id="savepngbtn" type="button" value="保存PNG图片">
+          <!-- <input id="convertpngbtn" type="button" value="转换成PNG图片"> -->
+          <input id="savebmpbtn" type="button" value="保存BMP图片">
+          <!-- <input id="convertbmpbtn" type="button" value="转换成BMP图片"> -->
+          <input id="savejpegbtn" type="button" value="保存JPEG图片">
+          <input id="changeCanvas" type="button" value="Line">
+          <!-- <input id="convertjpegbtn" type="button" value="转换成JPEG图片"> -->
+          <!-- <input id="resetbtn" type="button" value="重置" > -->
+        </p>
+        <p id="lineTool">
+          <input id="size" type="text" onchange="sizeChange()"></input>
+          <button id="clear">clear</button>
+          <button id="eraser" onclick="doEraser()">eraser</button>
+          <select id = "shape" onchange="shapeChange()">
+            <option value = "99">shape</option>
+            <option value = "1">rectangle</option>
+            <option value = "0">circle</option>
+            <option value = "2">line</option>
+          </select>
+          <input id="color" type="color"/>
+        </p>
+        <p id="moveTool" style="display: none">
+          <select id = "shape" onchange="shapeChange()">
+              <option value = "1">logo</option>
+              <option value = "2">share</option>
+              <option value = "3">circle</option>
+              <option value = "4">line</option>
+            </select> 
+        </p>
+        <canvas id="thecanvas" style="border: 30px solid #f2f2f2; width: 500px; height: 610px">你的浏览器不支持画布技术，请使用谷歌浏览器/火狐浏览器或最新的IE9/10/11。</canvas>
+        <div class="images">
+          <img id="logo" src="" />
+          <img id="share" src="" />
+          <img id="name" src="" />
+          <img id="icon" src="" />
+        </div>
+      </div>
+      <div class="clear"></div>
+
+  </div>
+  <script src="./js/base64.js"></script>
+  <script src="./js/canvas2image.js"></script>
+  <script src="http://www.webhek.com/wordpress/wp-content/themes/webhek2016/js/jquery-3.1.1.min.js?v=7"></script>
+  <script src="./js/index.js"></script>
+  </body>
+  </html>

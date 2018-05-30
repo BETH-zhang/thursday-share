@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+ <head>
+ <meta charset="utf-8" />
+ <title></title>
+ </head>
+ <body>
+ <div>
+ <div>
+  
+ <!--<input type="button" id="open" value="open"></input>
+ <input type="button" id= "save" value = "save"></input> <input type="button" id= "color" value="color"></input> -->
+ <input type="button" value="size"></input>
+ <input type="text" id="size" onchange="sizeChange()"></input>
+ <input type="button" id="clear" value="clear"></input>
+ <input type="button" id="eraser" value="eraser" onclick="doEraser()"></input>
+ <select id = "shape" onchange="shapeChange()">
+  <option value = "99">shape</option>
+  <option value = "1">rectangle</option>
+  <option value = "0">circle</option>
+  <option value = "2">line</option>
+ </select>
+ 
+  
+ <input id="color" type="color"/>
+ </div>
+ <canvas id="myCanvas" style=" border:1px solid;" width="800" height="500"></canvas>
+ </div>
+ <script src="./js/canvas.js"></script>
+ </body>

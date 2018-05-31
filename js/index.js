@@ -21,6 +21,7 @@ $(document).ready(function(){
    * 7.可以修改文案
    */
   var shareData = [
+    '董超|HTTP协议详解|没有主题的主题分享|2018年5月31日@周四@16:00-17:00',
     '董超|借小程序的幌子|带你了解文件服务和HTTP协议|2018年5月24日@周四@16:00-17:00',
     '张百鸽|微信小程序的深入探索|带你领略小程序的设计之美|2018年5月17日@周四@14:00-16:00',
     '孙敬云|程序员修炼之道|带你学习如来神掌|2018年4月11日@周三@15:00-18:00',
@@ -33,7 +34,7 @@ $(document).ready(function(){
     var data = {
       '孙敬云': 'sunjingyun',
       '杨鹏': 'default',
-      '董超': 'dongchao',
+      // '董超': 'dongchao',
       '赵珊珊': 'zhaoshanshan'
     };
     return data[key];
@@ -96,6 +97,7 @@ $(document).ready(function(){
       oCtx.fillRect(0,0,iWidth,iHeight);
 
       loadLogo();
+      loadBg();
       loadShare();
       loadTitle();
       loadSubTitle();
@@ -125,6 +127,11 @@ $(document).ready(function(){
       logoImg.onload = function() {
         oCtx.drawImage(logoImg, x || 50, y || 30, 110, 40);
       }
+    }
+
+    function loadBg() {
+      oCtx.fillStyle = "#f2f2f2";
+      oCtx.fillRect(48,88,404,274);
     }
 
     function loadShare() {

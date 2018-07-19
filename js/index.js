@@ -21,6 +21,8 @@ $(document).ready(function(){
    * 7.可以修改文案
    */
   var shareData = [
+    '张艳超|Lodash文档整理|我挺好的，只是有点水而已|2018年7月19日@周四@15:00-18:00',
+    '赵珊珊|Kotlin入门|平民级分享，欢迎小白进门|2018年7月19日@周四@15:00-18:00',
     '美小全员|我不是药神|讨论那些正版、盗版、法律和人情~|2018年7月12日@周四@15:00-18:00',
     '谷进杰|Kotlin实用技巧|满满的小干货，希望你能喜欢～|2018年7月12日@周四@15:00-18:00',
     '祝星星|前端缓存简介|^_^|2018年7月5日@周四@16:30-19:00',
@@ -43,9 +45,9 @@ $(document).ready(function(){
   ];
   var nameData = function(key) {
     var data = {
-      '孙敬云': 'sunjingyun',
+      // '孙敬云': 'sunjingyun',
       '杨鹏': 'default',
-      // '董超': 'dongchao',
+      '董超': 'dongchao',
       '赵珊珊': 'zhaoshanshan'
     };
     return data[key];
@@ -134,7 +136,7 @@ $(document).ready(function(){
       // logo
       logoImg = new Image();
       // 图片必须的相同域名，如果是非本地的不能保存成功
-      logoImg.src = 'http://127.0.0.1:8080/images/logo.png';
+      logoImg.src = `${window.location.origin}/images/logo.png`;
       logoImg.onload = function() {
         oCtx.drawImage(logoImg, x || 50, y || 30, 110, 40);
       }
@@ -151,10 +153,10 @@ $(document).ready(function(){
     
       // share
       shareImg = new Image();
-      shareImg.src = 'http://127.0.0.1:8080/images/' + currentShare + '.jpg';
+      shareImg.src = `${window.location.origin}/images/${currentShare}.jpg`;
       shareImg.onload = function() {
         oCtx.drawImage(shareImg, 50, 90, 400, 270);
-        nameImg.src = 'http://127.0.0.1:8080/images/' + currentName + '.png';
+        nameImg.src = `${window.location.origin}/images/${currentName}.jpg`;
         nameImg.onload = function() {
           oCtx.drawImage(nameImg, 300, 140, 150, 50);
         }
@@ -185,7 +187,7 @@ $(document).ready(function(){
     function loadIcon() {
       // icon
       iconImg = new Image();
-      iconImg.src = 'http://127.0.0.1:8080/images/icon.png';
+      iconImg.src = `${window.location.origin}/images/icon.png`;
       iconImg.onload = function() {
         oCtx.drawImage(iconImg, 50, 520, 20, 35);
       }

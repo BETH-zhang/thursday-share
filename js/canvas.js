@@ -3,16 +3,16 @@ var orignalX, orignalY; //the coordinate of mouse down
 var lastX, lastY; //the coordinate of last mouse position
 var isMouseDown = false; // flag of mouse pressing down
 var myCanvas = document.getElementById("myCanvas");
-var context = myCanvas.getContext('2d');
+var context = myCanvas.getContext("2d");
 var width = myCanvas.width,
   height = myCanvas.height;
-var data; //storing last canvas' content
+var data; //storing last canvas" content
 context.strokeStyle = "black";
 context.strokeWidth = 1;
 context.lineWidth = 1;
 
 
-document.getElementById('color').onchange = function () {
+document.getElementById("color").onchange = function () {
   context.strokeStyle = this.value
 };
 
@@ -22,7 +22,7 @@ function doEraser() {
 }
 
 function sizeChange() {
-  context.lineWidth = parseInt(document.getElementById('size').value);
+  context.lineWidth = parseInt(document.getElementById("size").value);
 }
 
 function shapeChange() {

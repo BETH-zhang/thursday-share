@@ -5,10 +5,10 @@ $(document).ready(function(){
   var changeCanvasBtn = document.getElementById("changeCanvas");
   var lineTool = document.getElementById("lineTool");
   var moveTool = document.getElementById("moveTool");
-  var logoImg = document.getElementById('logo');
-  var nameImg = document.getElementById('name');
-  var shareImg = document.getElementById('share');
-  var iconImg = document.getElementById('icon');
+  var logoImg = document.getElementById("logo");
+  var nameImg = document.getElementById("name");
+  var shareImg = document.getElementById("share");
+  var iconImg = document.getElementById("icon");
 
   /**
    * todo
@@ -21,55 +21,55 @@ $(document).ready(function(){
    * 7.可以修改文案
    */
   var shareData = [
-    '王贤|K8s|容器集群管理系统|2018年8月2日@周四@15:00-18:00',
-    '董超|小程序的登录|深入理解小程序的登录逻辑|2018年8月2日@周四@15:00-18:00',
-    '杜渺|跟读测评|英语跟读评测gop的核心原理|2018年7月26日@周三@15:00-17:00',
-    '张艳超|Lodash文档整理|我挺好的，只是有点水而已|2018年7月19日@周四@15:00-18:00',
-    '赵珊珊|Kotlin入门|平民级分享，欢迎小白进门|2018年7月19日@周四@15:00-18:00',
-    '美小全员|我不是药神|讨论那些正版、盗版、法律和人情~|2018年7月12日@周四@15:00-18:00',
-    '谷进杰|Kotlin实用技巧|满满的小干货，希望你能喜欢～|2018年7月12日@周四@15:00-18:00',
-    '祝星星|前端缓存简介|^_^|2018年7月5日@周四@16:30-19:00',
-    '张旭东|postgres索引介绍|^_^|2018年7月5日@周四@16:30-19:00.jpg',
-    '杨鹏|CDN架构|带你了解CDN厂商的那些事|2018年5月28日@周四@15:00-17:00',
-    '彭良维|小程序流程一条龙|从入门到放弃，嘿嘿|2018年5月28日@周四@15:00-17:00',
-    '刘菲|Webpack4|Smart项目中的应用实战|2018年6月21日@周四@13:00-17:00',
-    '董超|验证码解密|验证码的十万个为什么|2018年6月21日@周四@13:00-17:00',
-    '贾雨峰|博客系统|带你从零建个人博客|2018年6月14日@周四@14:00-17:00',
-    '王贤|GraphGL 简介|GraphGL 在教育云的实践|2018年6月14日@周四@14:00-17:00',
-    '张百鸽|解码MVVM|带你了解Vue的双向数据绑定|2018年6月7日@周四@15:00-16:30',
-    '董超|HTTP协议详解|没有主题的主题分享|2018年5月31日@周四@16:00-17:00',
-    '董超|借小程序的幌子|带你了解文件服务和HTTP协议|2018年5月24日@周四@16:00-17:00',
-    '张百鸽|微信小程序的深入探索|带你领略小程序的设计之美|2018年5月17日@周四@14:00-16:00',
-    '孙敬云|程序员修炼之道|带你学习如来神掌|2018年4月11日@周三@15:00-18:00',
-    '杨鹏|自动化运维实践|智课运维的实践之路|2018年4月11日@周三@17:30-19:00',
-    '厂商分享|体感 未来已来|极致体验|2018年4月12日@周四@15:00-17:00',
-    'U3D团队|让孩子练习更生动|U3D那些对接进度成果展示|2018年4月19日@周四@10:00-12:00',
-    '课前团队|让孩子预习更有趣|一切为了孩子|2018年4月19日@周四@10:00-12:00'
+    "王贤|K8s|容器集群管理系统|2018年8月2日@周四@15:00-18:00",
+    "董超|小程序的登录|深入理解小程序的登录逻辑|2018年8月2日@周四@15:00-18:00",
+    "杜渺|跟读测评|英语跟读评测gop的核心原理|2018年7月26日@周三@15:00-17:00",
+    "张艳超|Lodash文档整理|我挺好的，只是有点水而已|2018年7月19日@周四@15:00-18:00",
+    "赵珊珊|Kotlin入门|平民级分享，欢迎小白进门|2018年7月19日@周四@15:00-18:00",
+    "美小全员|我不是药神|讨论那些正版、盗版、法律和人情~|2018年7月12日@周四@15:00-18:00",
+    "谷进杰|Kotlin实用技巧|满满的小干货，希望你能喜欢～|2018年7月12日@周四@15:00-18:00",
+    "祝星星|前端缓存简介|^_^|2018年7月5日@周四@16:30-19:00",
+    "张旭东|postgres索引介绍|^_^|2018年7月5日@周四@16:30-19:00.jpg",
+    "杨鹏|CDN架构|带你了解CDN厂商的那些事|2018年5月28日@周四@15:00-17:00",
+    "彭良维|小程序流程一条龙|从入门到放弃，嘿嘿|2018年5月28日@周四@15:00-17:00",
+    "刘菲|Webpack4|Smart项目中的应用实战|2018年6月21日@周四@13:00-17:00",
+    "董超|验证码解密|验证码的十万个为什么|2018年6月21日@周四@13:00-17:00",
+    "贾雨峰|博客系统|带你从零建个人博客|2018年6月14日@周四@14:00-17:00",
+    "王贤|GraphGL 简介|GraphGL 在教育云的实践|2018年6月14日@周四@14:00-17:00",
+    "张百鸽|解码MVVM|带你了解Vue的双向数据绑定|2018年6月7日@周四@15:00-16:30",
+    "董超|HTTP协议详解|没有主题的主题分享|2018年5月31日@周四@16:00-17:00",
+    "董超|借小程序的幌子|带你了解文件服务和HTTP协议|2018年5月24日@周四@16:00-17:00",
+    "张百鸽|微信小程序的深入探索|带你领略小程序的设计之美|2018年5月17日@周四@14:00-16:00",
+    "孙敬云|程序员修炼之道|带你学习如来神掌|2018年4月11日@周三@15:00-18:00",
+    "杨鹏|自动化运维实践|智课运维的实践之路|2018年4月11日@周三@17:30-19:00",
+    "厂商分享|体感 未来已来|极致体验|2018年4月12日@周四@15:00-17:00",
+    "U3D团队|让孩子练习更生动|U3D那些对接进度成果展示|2018年4月19日@周四@10:00-12:00",
+    "课前团队|让孩子预习更有趣|一切为了孩子|2018年4月19日@周四@10:00-12:00"
   ];
   var nameData = function(key) {
     var data = {
-      // '孙敬云': 'sunjingyun',
-      '杨鹏': 'default',
-      '董超': 'dongchao',
-      '赵珊珊': 'zhaoshanshan'
+      // "孙敬云": "sunjingyun",
+      "杨鹏": "default",
+      "董超": "dongchao",
+      "赵珊珊": "zhaoshanshan"
     };
     return data[key];
   };
-  // console.log(shareData, nameData['董超']);
+  // console.log(shareData, nameData["董超"]);
  
-  var currentShareAddress = '海淀区大柳树富海大厦2号楼1102  Tad会议室';
+  var currentShareAddress = "海淀区大柳树富海大厦2号楼1102  Tad会议室";
 
   function init() {
     updateCanvas(0);
-    var eleUi = document.getElementById('shareList');
+    var eleUi = document.getElementById("shareList");
     var eleDiv = [];
     shareData.forEach(function(item, index) {
-      eleDiv.push('<li>' + item + '<button class="btn" key="' + index + '">生成图片</button></li>');
+      eleDiv.push("<li>" + item + "<button class="btn" key="" + index + "">生成图片</button></li>");
     });
-    eleUi.innerHTML = eleDiv.join('');
-    var $btn = $('.btn');
-    $btn.bind('click', function() {
-      var btnIndex = $(this).attr('key');
+    eleUi.innerHTML = eleDiv.join("");
+    var $btn = $(".btn");
+    $btn.bind("click", function() {
+      var btnIndex = $(this).attr("key");
 
       updateCanvas(btnIndex);
     });
@@ -91,7 +91,7 @@ $(document).ready(function(){
   
   function updateCanvas(currentIndex) {
     var currentShare = shareData[currentIndex];
-    var currentShareTmp = currentShare.split('|');
+    var currentShareTmp = currentShare.split("|");
     var currentSharePeople = currentShareTmp[0];
     var currentName = nameData(currentSharePeople);
     var currentShareTitle = currentShareTmp[1];
@@ -168,23 +168,23 @@ $(document).ready(function(){
 
     function loadTitle() {
       // title
-      oCtx.fillStyle = '#405aa5';
-      oCtx.font = '33px Microsoft YaHei';
+      oCtx.fillStyle = "#405aa5";
+      oCtx.font = "33px Microsoft YaHei";
       oCtx.fillText(currentShareTitle, 50, 420);
     }
 
     function loadSubTitle() {
       // subTitle
-      oCtx.fillStyle = '#000';
-      oCtx.font = '24px Microsoft YaHei';
+      oCtx.fillStyle = "#000";
+      oCtx.font = "24px Microsoft YaHei";
       oCtx.fillText(currentShareSubTitle, 50, 460);
     }
 
     function loadPeople() {
       // people
-      oCtx.fillStyle = '#000';
-      oCtx.font = '16px Microsoft YaHei';
-      oCtx.fillText('分享人：' + currentSharePeople, 50, 500);
+      oCtx.fillStyle = "#000";
+      oCtx.font = "16px Microsoft YaHei";
+      oCtx.fillText("分享人：" + currentSharePeople, 50, 500);
     }
 
     function loadIcon() {
@@ -198,15 +198,15 @@ $(document).ready(function(){
 
     function loadTime() {
       // time
-      oCtx.fillStyle = '#000';
-      oCtx.font = '14px Microsoft YaHei';
-      oCtx.fillText(currentShareTime.split('@').join(' '), 80, 533);
+      oCtx.fillStyle = "#000";
+      oCtx.font = "14px Microsoft YaHei";
+      oCtx.fillText(currentShareTime.split("@").join(" "), 80, 533);
     }
 
     function loadAddress() {
       // address
-      oCtx.fillStyle = '#000';
-      oCtx.font = '14px Microsoft YaHei';
+      oCtx.fillStyle = "#000";
+      oCtx.font = "14px Microsoft YaHei";
       oCtx.fillText(currentShareAddress, 80, 554);
     }
     
@@ -246,10 +246,10 @@ $(document).ready(function(){
     oCanvas.onmousemove = function(e) {
       if (bMouseIsDown) {
         switch (changeCanvasBtn.value) {
-          case 'Line':
+          case "Line":
             onmousemoveLine(e);
             break;
-          case 'Move':
+          case "Move":
             onmousemoveMove(e);
             break;
         }
@@ -307,14 +307,14 @@ $(document).ready(function(){
       saveCanvas(oCanvas, "JPEG");
     }
     changeCanvasBtn.onclick = function() {
-      if (this.value === 'Line') {
-        this.value = 'Move';
-        lineTool.style.display = 'none';
-        moveTool.style.display = 'block';
+      if (this.value === "Line") {
+        this.value = "Move";
+        lineTool.style.display = "none";
+        moveTool.style.display = "block";
       } else {
-        this.value = 'Line';
-        lineTool.style.display = 'block';
-        moveTool.style.display = 'none';
+        this.value = "Line";
+        lineTool.style.display = "block";
+        moveTool.style.display = "none";
       }
     }
   }

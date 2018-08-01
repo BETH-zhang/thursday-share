@@ -28,7 +28,7 @@ var Canvas2Image = (function() {
 
 	var strDownloadMime = "image/octet-stream";
 
-	// ok, we're good
+	// ok, we"re good
 	var readCanvasData = function(oCanvas) {
 		var iWidth = parseInt(oCanvas.width);
 		var iHeight = parseInt(oCanvas.height);
@@ -148,12 +148,12 @@ var Canvas2Image = (function() {
 	// 	document.location.href = strData;
 	// }
 	var saveFile = function(data, filename) {
-		var save_link = document.createElementNS('http://www.w3.org/1999/xhtml', 'a');
+		var save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a");
     save_link.href = data;
     save_link.download = filename;
    
-    var event = document.createEvent('MouseEvents');
-    event.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+    var event = document.createEvent("MouseEvents");
+    event.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
     save_link.dispatchEvent(event);
 	}
 
@@ -185,9 +185,9 @@ var Canvas2Image = (function() {
 	}
 
 	var _fixType = function(type) {
-		type = type.toLowerCase().replace(/jpg/i, 'jpeg');
+		type = type.toLowerCase().replace(/jpg/i, "jpeg");
     var r = type.match(/png|jpeg|bmp|gif/)[0];
-    return 'image/' + r;
+    return "image/" + r;
 	}
 
 	return {
@@ -201,7 +201,7 @@ var Canvas2Image = (function() {
 			if (bReturnImg) {
 				return makeImageObject(strData);
 			} else {
-				saveFile(strData.replace("image/png", strDownloadMime), filename + '.png');
+				saveFile(strData.replace("image/png", strDownloadMime), filename + ".png");
 			}
 			return true;
 		},
@@ -224,7 +224,7 @@ var Canvas2Image = (function() {
 			if (bReturnImg) {
 				return makeImageObject(strData);
 			} else {
-				saveFile(strData.replace(strMime, strDownloadMime), filename + '.jpeg');
+				saveFile(strData.replace(strMime, strDownloadMime), filename + ".jpeg");
 			}
 			return true;
 		},
@@ -241,7 +241,7 @@ var Canvas2Image = (function() {
 			if (bReturnImg) {
 				return makeImageObject(makeDataURI(strImgData, "image/bmp"));
 			} else {
-				saveFile(makeDataURI(strImgData, strDownloadMime), filename + '.bmp');
+				saveFile(makeDataURI(strImgData, strDownloadMime), filename + ".bmp");
 			}
 			return true;
 		}

@@ -9,7 +9,7 @@ body {
   margin: 0 auto;
 }
 
-input[type='button'] {
+input[type="button"] {
   display: inline-block;
   width: 120px;
   height: 35px;
@@ -47,5 +47,4 @@ input[type="button"]:hover {
   background: #000;
   opacity: 0.3;
   width: 10px;
-  height: 100vh;
 }

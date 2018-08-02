@@ -6,46 +6,40 @@
   "data": {
     "bgImg": {
       "type": "image",
-      "src": "//static.uskid.com/file/jpeg/jkc6skqh_wW0nrgdfL0RWLVN9BcpfAr5G.jpeg",
+      "src": "/images/bg1.jpg",
       "position": [0, 0],
       "size": [400, 600]
     },
-    "logo": {
-      "type": "image",
-      "src": "//static.uskid.com/file/png/jkc7eju5_rYnrGzkhr2XR84YOD3zZl5ap.png",
-      "position": [30, 30],
-      "size": [120, 40]
-    },
     "title": {
       "type": "text",
-      "fillStyle": "#405aa5",
+      "fillStyle": "#fff",
       "font": "38px Microsoft YaHei",
-      "position": [50, 420]
+      "position": [50, 220]
     },
     "subTitle": {
       "type": "text",
-      "fillStyle": "#000",
+      "fillStyle": "#fff",
       "font": "24px Microsoft YaHei",
-      "position": [50, 460]
+      "position": [50, 260]
     },
     "mc": {
       "type": "text",
-      "fillStyle": "#000",
+      "fillStyle": "#fff",
       "font": "16px Microsoft YaHei",
-      "position": [50, 500]
+      "position": [50, 300]
     },
     "schedule": {
       "type": "text",
-      "fillStyle": "#000",
+      "fillStyle": "#fff",
       "font": "14px Microsoft YaHei",
-      "position": [80, 533]
+      "position": [50, 333]
     },
     "address": {
       "type": "text",
-      "fillStyle": "#000",
+      "fillStyle": "#fff",
       "font": "14px Microsoft YaHei",
       "text": "上园村知行大厦2楼",
-      "position": [80, 554]
+      "position": [50, 354]
     }	
   }
 }

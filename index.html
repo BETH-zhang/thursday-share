@@ -38,6 +38,7 @@
 
         <button id="saveBtn" class="btn btn-primary">生成图片</button>
         <br />
+        <br />
 
         <!-- <p id="lineTool">
           <input id="size" type="text" onchange="sizeChange()"></input>
@@ -59,7 +60,7 @@
               <option value = "4">line</option>
             </select> 
         </p> -->
-        <canvas id="thecanvas" style="border: 30px solid #f2f2f2; width: 500px; height: 610px">你的浏览器不支持画布技术，请使用谷歌浏览器/火狐浏览器或最新的IE9/10/11。</canvas>
+        <canvas id="mycanvas" style="border: 30px solid #f2f2f2; width: 500px; height: 610px">你的浏览器不支持画布技术，请使用谷歌浏览器/火狐浏览器或最新的IE9/10/11。</canvas>
 
         <p>
           <input id="savepngbtn" type="button" value="保存PNG图片">
@@ -78,14 +79,27 @@
   <script src="./js/base64.js"></script>
   <script src="./js/canvas2image.js"></script>
   <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
-  <script type="text/javascript" src="./js/module.js?t=15"></script>
+  <script type="text/javascript" src="./js/module.js?t=35"></script>
   <script type="text/javascript">
     $(function() {
       $.getJSON("./js/data.json?t=4", function(data) {
         console.log(1, data);
         ModuleDriver.init(data);
       });
-    });
+
+      $('#saveBtn').click(function() {
+        var detail = {};
+        var inputs = $('.form-control');
+        Object.keys(inputs).forEach(function (item) {
+          var input = inputs[item];
+          if (typeof input === 'object' && $(input).attr('id')) {
+            detail[$(input).attr('id')] = $(input).val();
+          }
+        })
+        // ModuleDriver.initCanves(detail)
+        ModuleDriver.update({ detail: detail })
+      });
+    })
   </script>
   </body>
   </html>

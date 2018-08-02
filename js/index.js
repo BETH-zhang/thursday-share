@@ -64,7 +64,7 @@ $(document).ready(function(){
     var eleUi = document.getElementById("shareList");
     var eleDiv = [];
     shareData.forEach(function(item, index) {
-      eleDiv.push("<li>" + item + "<button class="btn" key="" + index + "">生成图片</button></li>");
+      eleDiv.push('<li>" + item + "<button class="btn" key="' + index + '">生成图片</button></li>');
     });
     eleUi.innerHTML = eleDiv.join("");
     var $btn = $(".btn");

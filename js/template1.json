@@ -13,13 +13,13 @@
     "title": {
       "type": "text",
       "fillStyle": "#fff",
-      "font": "38px Microsoft YaHei",
+      "font": "38px LiDeBiao-Xing313a04d1d3b1dada",
       "position": [50, 220]
     },
     "subTitle": {
       "type": "text",
       "fillStyle": "#fff",
-      "font": "24px Microsoft YaHei",
+      "font": "24px LiDeBiao-Xing313a04d1d3b1dada",
       "position": [50, 260]
     },
     "mc": {

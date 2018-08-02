@@ -81,9 +81,6 @@
 		var savepngbtn = document.getElementById("savepngbtn");
 		var savebmpbtn = document.getElementById("savebmpbtn");
 		var savejpegbtn = document.getElementById("savejpegbtn");
-		var changeCanvasBtn = document.getElementById("changeCanvas");
-		var lineTool = document.getElementById("lineTool");
-		var moveTool = document.getElementById("moveTool");
 	
 		// 画图的状态
 		var bMouseIsDown = false;

@@ -20,7 +20,18 @@
 		    	schedule: schedule,
 		    	address: address
 		    }
- 		}
+		 },
+		 isFunction: function(value) {
+			 return typeof value === 'function' &&
+			        value instanceof Function
+		 },
+		 objectKeys: function(obj) {
+			 const ary = [];
+			 for (var key in obj) {
+				ary.push(key);
+			 }
+			 return ary;
+		 }
 	};
 	
 	// 定义画布函数
@@ -52,21 +63,18 @@
 					type: 'text',
 					fillStyle: '#405aa5',
 					font: '33px Microsoft YaHei',
-					fillText: '',
 					position: [50, 420]
 				},
 				subTitle: {
 					type: 'text',
 					fillStyle: '#000',
 					font: '24px Microsoft YaHei',
-					fillText: '',
 					position: [50, 460]
 				},
 				mc: {
 					type: 'text',
 					fillStyle: '#000',
 					font: '16px Microsoft YaHei',
-					text: '',
 					position: [50, 500]
 				},
 				icon: {
@@ -79,7 +87,6 @@
 					type: 'text',
 					fillStyle: '#000',
 					font: '14px Microsoft YaHei',
-					text: '',
 					position: [80, 533]
 				},
 				address: {
@@ -91,7 +98,9 @@
 				}	
 			}
 		};
+		console.log(config, $.extend({}, { name: 1, age: 2 }, { age: 3 }))
 		var __CONFIG__ = $.extend({}, defaultConfig, config)
+		console.log(__CONFIG__, '00')
 
 		// 初始化
 		var savepngbtn = document.getElementById("savepngbtn");
@@ -110,7 +119,7 @@
 		
 		return {
 			init: function(data) {
-				console.log(oCanvas, oCtx, data, '===', __CONFIG__)
+				var self = this;
 				oCanvas.width = __CONFIG__.width;
 				oCanvas.height = __CONFIG__.height;
 				var iWidth = oCanvas.width;
@@ -118,58 +127,99 @@
 				oCtx.fillStyle = __CONFIG__.backgroundColor;
 				oCtx.fillRect(...__CONFIG__.position,iWidth,iHeight);
 
-				for (var item in __CONFIG__.data) {
-					this.initTemplate(__CONFIG__.data[item], data[item]);
-				}	
+				// 递归调用解决同步问题
+				const configData = common.objectKeys(__CONFIG__.data);
+				const configDataCount = configData.length;
+				this.recursionAsync(configDataCount, __CONFIG__.data, data)
+				function showTime(count) {
+					console.log("count is : ", count);
+					if (count == 0) {
+							console.log("All is Done!");
+					} else {
+							count -= 1;
+							setTimeout(function() {
+									showTime(count);
+							}, 1000);
+					}
+				}
+				// 使用async、await实现
 			},
-			initTemplate: function(config, data) {
-				console.log(config, data)
+			recursionAsync: function(count, config, data) {
+				const self = this;
+				console.log(count)
+				if (count === 0) {
+					console.log('All is Done!');
+				}	else {
+					count -= 1;
+					const configData = common.objectKeys(config);
+					const configDataCount = configData.length;
+					const key = configData[configDataCount - 1 - count];
+					console.log(key, '---:key:');
+					this.initTemplate(config[key], data[key], function() {
+						self.recursionAsync(count, config, data);
+					})
+				}
+			},
+			initTemplate: function(config, data, callback) {
 				switch(config.type) {
 					case 'image':
-						this.drawImage(config, data)
+						this.drawImage(config, data, callback)
 						break;
 					case 'rect':
-						this.drawRect(config, data)
+						this.drawRect(config, data, callback)
 						break;
 					case 'text':
-						this.drawText(config, data)
+						this.drawText(config, data, callback)
 						break;
 					default:
+						if (common.isFunction(callback)) {
+							callback()
+						}	
 						break;
 				}
 			},
-			drawImage: function(config, data) {
+			drawImage: function(config, data, callback) {
 				var image = new Image();
 				// 图片必须的相同域名，如果是非本地的不能保存成功
 				image.src = data || config.src;
+				console.log(image.src, '====img====');
 				image.onload = function() {
 					oCtx.drawImage(image, ...config.position, ...config.size);
+					if (common.isFunction(callback)) {
+						callback()
+					}
 				}
+				console.log(image.complete, '图片加载完成')
 			},
-			drawRect: function(config, data) {
+			drawRect: function(config, data, callback) {
 				oCtx.fillStyle = config.fillStyle;
 				oCtx.fillRect(...config.position, ...config.size);
+				if (common.isFunction(callback)) {
+					callback()
+				}
 			},
-			drawText: function(config, data) {
+			drawText: function(config, data, callback) {
 				oCtx.fillStyle = config.fillStyle;
 				oCtx.font = config.font;
 				oCtx.fillText(data || config.text, ...config.position);
+				if (common.isFunction(callback)) {
+					callback()
+				}
 			},
 		}
 	}
 
  	// 模块驱动的对象
  	var __DRIVER__ = this[f] = {
- 		init: function(meta, config) {
+ 		init: function({ data, config, template }) {
  			// 初始化
-			this.meta = meta;
+			this.meta = data;
 			this.config = config;
-			console.log(2, meta, config)
+			this.template = template;
  			// 加载数据
 			this.load();
  		},
  		load: function() {
-			console.log(3, this.meta, this.config)
 			// 重组数据
 			this.config = $.extend({}, __MODULE__, this.config);
  			// 分析填充数据
@@ -178,20 +228,14 @@
  			this.refresh();
  		},
  		fetch: function() {
-			console.log(this)
  			for (var module in this.config) {
-				console.log(this)
 				this.config[module].data = this.meta[module];
  			}
  		},
  		refresh: function() {
-			console.log("refresh", this.config);
  			for (var module in this.config) {
 				// 利用数据劫持去优化，数据没有修改的对象不进行view渲染
-				if (
-					typeof this.config[module].refresh === 'function' &&
-					this.config[module].refresh instanceof Function
-				) {
+				if (common.isFunction(this.config[module].refresh)) {
 					this.config[module].refresh(); // 渲染模块
 				}
  			}
@@ -204,7 +248,8 @@
 		 },
 		 // 对外直接暴露修改canvas的接口
 		 initCanves: function(data) {
-			 canvas().init(data);
+			 console.log(this.template, '===', this)
+			 canvas(this.template).init(data);
 		 },
 	 };
 	 $.extend(__DRIVER__, common);

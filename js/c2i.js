@@ -86,48 +86,12 @@
 					position: [48, 88],
 					size: [404, 274],
 				},
-				cover: {
-					type: 'image',
-					position: [50, 90],
-					size: [400, 270],	
-				},
 				title: {
 					type: 'text',
 					fillStyle: '#405aa5',
 					font: '33px Microsoft YaHei',
 					position: [50, 420]
 				},
-				subTitle: {
-					type: 'text',
-					fillStyle: '#000',
-					font: '24px Microsoft YaHei',
-					position: [50, 460]
-				},
-				mc: {
-					type: 'text',
-					fillStyle: '#000',
-					font: '16px Microsoft YaHei',
-					position: [50, 500]
-				},
-				icon: {
-					type: 'image',
-					src: `${window.location.origin}/images/icon.png`,
-					position: [50, 520],
-					size: [20, 35],
-				},
-				schedule: {
-					type: 'text',
-					fillStyle: '#000',
-					font: '14px Microsoft YaHei',
-					position: [80, 533]
-				},
-				address: {
-					type: 'text',
-					fillStyle: '#000',
-					font: '14px Microsoft YaHei',
-					text: '海淀区大柳树富海大厦2号楼1102  Tad会议室',
-					position: [80, 554]
-				}	
 			}
 		};
 		var __CONFIG__ = _extends({}, defaultConfig, config)
@@ -146,7 +110,6 @@
 		
 		return {
 			init: function(data) {
-				var self = this;
 				oCanvas.width = __CONFIG__.width;
 				oCanvas.height = __CONFIG__.height;
 				var iWidth = oCanvas.width;
@@ -160,18 +123,42 @@
 				this.recursionAsync(configDataCount, __CONFIG__.data, data)
 				// 使用async、await实现
 
-				// 初始化下载状态
-				this.initSave();
+				// 初始化自定义画板
+				this.initPaintBoard();
 			},
-			initSave: function() {
+			initPaintBoard: function() {
+				const self = this;
+				// 在画布上画操作
+				oCanvas.onmousedown = function(e) {
+					bMouseIsDown = true;
+					iLastX = self.getCanvasXY(e).x;
+					iLastY = self.getCanvasXY(e).y;
+				}
+				oCanvas.onmousemove = function(e) {
+					if (bMouseIsDown) {
+						switch (changeCanvasBtn.value) {
+							case "Line":
+								self.onmousemoveLine(e);
+								break;
+							case "Move":
+								self.onmousemoveMove(e);
+								break;
+						}
+					}
+				}
+				oCanvas.onmouseup = function() {
+					bMouseIsDown = false;
+					iLastX = -1;
+					iLastY = -1;
+				}
 				savepngbtn.onclick = function() {
-					saveCanvas(oCanvas, "PNG");
+					self.saveCanvas(oCanvas, "PNG");
 				}
 				savebmpbtn.onclick = function() {
-					saveCanvas(oCanvas, "BMP");
+					self.saveCanvas(oCanvas, "BMP");
 				}
 				savejpegbtn.onclick = function() {
-					saveCanvas(oCanvas, "JPEG");
+					self.saveCanvas(oCanvas, "JPEG");
 				}
 			},
 			recursionAsync: function(count, config, data) {
@@ -236,6 +223,47 @@
 					callback()
 				}
 			},
+			getCanvasXY: function(e) {
+        var clientLeft = -30;
+        var clientTop = -30;
+        return {
+          x: clientLeft + e.clientX - common.getOffsetLeft(oCanvas) + document.body.scrollLeft,
+          y: clientTop + e.clientY - common.getOffsetTop(oCanvas) + $(window).scrollTop(),
+        }
+      },
+      onmousemoveLine: function(e) {
+        var iX = this.getCanvasXY(e).x;
+        var iY = this.getCanvasXY(e).y;
+        oCtx.moveTo(iLastX, iLastY);
+        oCtx.lineTo(iX, iY); 
+        oCtx.stroke();
+        iLastX = iX;
+        iLastY = iY;
+      },
+      onmousemoveMove: function(e) {
+        var iX = this.getCanvasXY(e).x;
+        var iY = this.getCanvasXY(e).y;
+        //先清除之前的然后重新绘制
+        oCtx.clearRect(0, 0, oCanvas.width, oCanvas.height);
+        this.moveCanvas(iX, iY);
+      },
+      moveCanvas: function(x, y) {
+        console.log(x, y)
+      },
+      saveCanvas: function(pCanvas, strType) {
+        var bRes = false;
+        if (strType == "PNG")
+          bRes = Canvas2Image.saveAsPNG(oCanvas, false, this.data.title);
+        if (strType == "BMP")
+          bRes = Canvas2Image.saveAsBMP(oCanvas, false, this.data.title);
+        if (strType == "JPEG")
+          bRes = Canvas2Image.saveAsJPEG(oCanvas, false, this.data.title);
+    
+        if (!bRes) {
+          alert("Sorry, this browser is not capable of saving " + strType + " files!");
+          return false;
+        }
+      }
 		}
 	}
 

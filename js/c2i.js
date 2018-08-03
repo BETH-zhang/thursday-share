@@ -59,7 +59,7 @@
 					value instanceof Function
 	};
 	var _objectKeys = function(objs) {
-		const ary = [];
+		var ary = [];
 		for (var key in objs) {
 		ary.push(key);
 		}
@@ -76,7 +76,7 @@
 			data: {
 				logo: {
 					type: 'image',
-					src: `${window.location.origin}/images/logo.png`,
+					src: '/images/logo.png',
 					position: [50, 30],
 					size: [110, 40],
 				},
@@ -102,7 +102,7 @@
 		var savejpegbtn = document.getElementById("savejpegbtn");
 	
 		// 画图的状态
-		// var bMouseIsDown = false;
+		var bMouseIsDown = false;
 
 		// 初始化canvas的状态
     var oCanvas = document.getElementById("mycanvas");
@@ -110,6 +110,7 @@
 		
 		return {
 			init: function(data) {
+				this.data = data;
 				oCanvas.width = __CONFIG__.width;
 				oCanvas.height = __CONFIG__.height;
 				var iWidth = oCanvas.width;
@@ -118,8 +119,8 @@
 				oCtx.fillRect(...__CONFIG__.position,iWidth,iHeight);
 
 				// 递归调用解决同步问题
-				const configData = _objectKeys(__CONFIG__.data);
-				const configDataCount = configData.length;
+				var configData = _objectKeys(__CONFIG__.data);
+				var configDataCount = configData.length;
 				this.recursionAsync(configDataCount, __CONFIG__.data, data)
 				// 使用async、await实现
 
@@ -127,7 +128,7 @@
 				this.initPaintBoard();
 			},
 			initPaintBoard: function() {
-				const self = this;
+				var self = this;
 				// 在画布上画操作
 				oCanvas.onmousedown = function(e) {
 					bMouseIsDown = true;
@@ -162,15 +163,15 @@
 				}
 			},
 			recursionAsync: function(count, config, data) {
-				const self = this;
+				var self = this;
 				_logger(count)
 				if (count === 0) {
 					_logger('All is Done!');
 				}	else {
 					count -= 1;
-					const configData = _objectKeys(config);
-					const configDataCount = configData.length;
-					const key = configData[configDataCount - 1 - count];
+					var configData = _objectKeys(config);
+					var configDataCount = configData.length;
+					var key = configData[configDataCount - 1 - count];
 					_logger(key, '---:key:');
 					this.initTemplate(config[key], data[key], function() {
 						self.recursionAsync(count, config, data);
@@ -228,7 +229,7 @@
         var clientTop = -30;
         return {
           x: clientLeft + e.clientX - common.getOffsetLeft(oCanvas) + document.body.scrollLeft,
-          y: clientTop + e.clientY - common.getOffsetTop(oCanvas) + $(window).scrollTop(),
+          y: clientTop + e.clientY - common.getOffsetTop(oCanvas) + window.screenTop,
         }
       },
       onmousemoveLine: function(e) {
@@ -251,7 +252,8 @@
         console.log(x, y)
       },
       saveCanvas: function(pCanvas, strType) {
-        var bRes = false;
+				var bRes = false;
+				console.log(this, this.data, '==')
         if (strType == "PNG")
           bRes = Canvas2Image.saveAsPNG(oCanvas, false, this.data.title);
         if (strType == "BMP")

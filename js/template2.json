@@ -1,20 +1,25 @@
 {
-  "width": 400,
-  "height": 600,
-  "backgroundColor": "#007bff",
+  "width": 500,
+  "height": 610,
+  "backgroundColor": "#fff",
   "position": [0, 0],
   "data": {
-    "bgImg": {
-      "type": "image",
-      "src": "//static.uskid.com/file/jpeg/jkc6skqh_wW0nrgdfL0RWLVN9BcpfAr5G.jpeg",
-      "position": [0, 0],
-      "size": [400, 600]
-    },
     "logo": {
       "type": "image",
-      "src": "//static.uskid.com/file/png/jkc7eju5_rYnrGzkhr2XR84YOD3zZl5ap.png",
-      "position": [30, 30],
-      "size": [120, 40]
+      "src": "/images/logo.png",
+      "position": [50, 30],
+      "size": [110, 40]
+    },
+    "bg": {
+      "type": "rect",
+      "fillStyle": "#f2f2f2",
+      "position": [48, 88],
+      "size": [404, 274]
+    },
+    "cover": {
+      "type": "image",
+      "position": [50, 90],
+      "size": [400, 270]
     },
     "title": {
       "type": "text",
@@ -34,6 +39,12 @@
       "font": "16px Microsoft YaHei",
       "position": [50, 500]
     },
+    "icon": {
+      "type": "image",
+      "src": "/images/icon.png",
+      "position": [50, 520],
+      "size": [20, 35]
+    },
     "schedule": {
       "type": "text",
       "fillStyle": "#000",
@@ -46,6 +57,6 @@
       "font": "14px Microsoft YaHei",
       "text": "上园村知行大厦2楼",
       "position": [80, 554]
-    }	
+    } 
   }
 }

@@ -2,6 +2,7 @@
  * c2i 1.0.0-alpha
  * Copyright (c) 2018 Beth
  * ModuleDriver
+ * depend on canvas2image.js
  */
 
  // webpack通用模块定义
@@ -24,7 +25,7 @@
 		global[framework] = factory.call(global, framework);
 	}
  })(this, function(f) {
-	var logger = function(value) {
+	var _logger = function(value) {
 		console.log(value);
 	}
 	var _extends = Object.assign || function (target) {
@@ -38,8 +39,7 @@
 		}
 		return target;
 	};
-
-	var formateDetail = function(data) {
+	var _formateDetail = function(data) {
 		var currentDataTmp = data.split("|");
 		var mc = currentDataTmp[0];
 		var title = currentDataTmp[1];
@@ -54,11 +54,11 @@
 			address: address
 		}
 	};
-	var isFunction = function(value) {
+	var _isFunction = function(value) {
 		return typeof value === 'function' &&
 					value instanceof Function
 	};
-	var objectKeys = function(objs) {
+	var _objectKeys = function(objs) {
 		const ary = [];
 		for (var key in objs) {
 		ary.push(key);
@@ -136,12 +136,9 @@
 		var savepngbtn = document.getElementById("savepngbtn");
 		var savebmpbtn = document.getElementById("savebmpbtn");
 		var savejpegbtn = document.getElementById("savejpegbtn");
-		var changeCanvasBtn = document.getElementById("changeCanvas");
-		var lineTool = document.getElementById("lineTool");
-		var moveTool = document.getElementById("moveTool");
 	
 		// 画图的状态
-		var bMouseIsDown = false;
+		// var bMouseIsDown = false;
 
 		// 初始化canvas的状态
     var oCanvas = document.getElementById("mycanvas");
@@ -158,33 +155,36 @@
 				oCtx.fillRect(...__CONFIG__.position,iWidth,iHeight);
 
 				// 递归调用解决同步问题
-				const configData = objectKeys(__CONFIG__.data);
+				const configData = _objectKeys(__CONFIG__.data);
 				const configDataCount = configData.length;
 				this.recursionAsync(configDataCount, __CONFIG__.data, data)
-				function showTime(count) {
-					logger("count is : ", count);
-					if (count == 0) {
-							logger("All is Done!");
-					} else {
-							count -= 1;
-							setTimeout(function() {
-									showTime(count);
-							}, 1000);
-					}
-				}
 				// 使用async、await实现
+
+				// 初始化下载状态
+				this.initSave();
+			},
+			initSave: function() {
+				savepngbtn.onclick = function() {
+					saveCanvas(oCanvas, "PNG");
+				}
+				savebmpbtn.onclick = function() {
+					saveCanvas(oCanvas, "BMP");
+				}
+				savejpegbtn.onclick = function() {
+					saveCanvas(oCanvas, "JPEG");
+				}
 			},
 			recursionAsync: function(count, config, data) {
 				const self = this;
-				logger(count)
+				_logger(count)
 				if (count === 0) {
-					logger('All is Done!');
+					_logger('All is Done!');
 				}	else {
 					count -= 1;
-					const configData = objectKeys(config);
+					const configData = _objectKeys(config);
 					const configDataCount = configData.length;
 					const key = configData[configDataCount - 1 - count];
-					logger(key, '---:key:');
+					_logger(key, '---:key:');
 					this.initTemplate(config[key], data[key], function() {
 						self.recursionAsync(count, config, data);
 					})
@@ -202,7 +202,7 @@
 						this.drawText(config, data, callback)
 						break;
 					default:
-						if (isFunction(callback)) {
+						if (_isFunction(callback)) {
 							callback()
 						}	
 						break;
@@ -212,19 +212,19 @@
 				var image = new Image();
 				// 图片必须的相同域名，如果是非本地的不能保存成功
 				image.src = data || config.src;
-				logger(image.src, '====img====');
+				_logger(image.src, '====img====');
 				image.onload = function() {
 					oCtx.drawImage(image, ...config.position, ...config.size);
-					if (isFunction(callback)) {
+					if (_isFunction(callback)) {
 						callback()
 					}
 				}
-				logger(image.complete, '图片加载完成')
+				_logger(image.complete, '图片加载完成')
 			},
 			drawRect: function(config, data, callback) {
 				oCtx.fillStyle = config.fillStyle;
 				oCtx.fillRect(...config.position, ...config.size);
-				if (isFunction(callback)) {
+				if (_isFunction(callback)) {
 					callback()
 				}
 			},
@@ -232,7 +232,7 @@
 				oCtx.fillStyle = config.fillStyle;
 				oCtx.font = config.font;
 				oCtx.fillText(data || config.text, ...config.position);
-				if (isFunction(callback)) {
+				if (_isFunction(callback)) {
 					callback()
 				}
 			},
@@ -265,20 +265,20 @@
  		refresh: function() {
  			for (var module in this.config) {
 				// 利用数据劫持去优化，数据没有修改的对象不进行view渲染
-				if (isFunction(this.config[module].refresh)) {
+				if (_isFunction(this.config[module].refresh)) {
 					this.config[module].refresh(); // 渲染模块
 				}
  			}
 		 },
 		 // 更新store数据
 		 update(data) {
-				logger(this.meta, this.config, data, '000')
+				_logger(this.meta, this.config, data, '000')
 				this.meta = _extends({}, this.meta, data);
 				this.load();
 		 },
 		 // 对外直接暴露修改canvas的接口
 		 initCanves: function(data) {
-			 logger(this.template, '===', this)
+			 _logger(this.template, '===', this)
 			 canvas(this.template).init(data);
 		 },
 	};
@@ -289,7 +289,7 @@
  			"view": undefined,
  			"data": undefined,
  			"refresh": function() {
-				 logger('detail', this.data)
+				 _logger('detail', this.data)
 				 __DRIVER__.initCanves(this.data)
  			}
  		},
@@ -297,7 +297,7 @@
  			"view": document.getElementById('shareList'),
  			"data": undefined,
  			"refresh": function() {
-				logger('---list渲染---')
+				_logger('---list渲染---')
  				var self = this;
 				var eleDiv = [];
 				this.data.forEach(function(item, index) {
@@ -310,9 +310,9 @@
 						var btnIndex = this.getAttribute('key');
 						var detail = {};
 						if (self.data[btnIndex]) {
-							detail = formateDetail(self.data[btnIndex]);
+							detail = _formateDetail(self.data[btnIndex]);
 						}
-						logger('current-detail', detail)
+						_logger('current-detail', detail)
 						__DRIVER__.initCanves(detail)
 					}
 				}

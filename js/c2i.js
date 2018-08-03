@@ -249,11 +249,10 @@
         this.moveCanvas(iX, iY);
       },
       moveCanvas: function(x, y) {
-        console.log(x, y)
+        _logger(x, y)
       },
       saveCanvas: function(pCanvas, strType) {
 				var bRes = false;
-				console.log(this, this.data, '==')
         if (strType == "PNG")
           bRes = Canvas2Image.saveAsPNG(oCanvas, false, this.data.title);
         if (strType == "BMP")

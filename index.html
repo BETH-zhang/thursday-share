@@ -79,13 +79,13 @@
   <script src="./js/base64.js"></script>
   <script src="./js/canvas2image.js"></script>
   <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
-  <script type="text/javascript" src="./js/module.js?t=0"></script>
+  <script type="text/javascript" src="./js/c2i.js?t=15"></script>
   <script type="text/javascript">
     $(function() {
       $.getJSON("./js/data.json?t=4", function(data) {
         console.log(1, data);
         $.getJSON("./js/template.json?t=${new Date()}", function(template) {
-            ModuleDriver.init({ data, template });
+            c2i.init({ data, template });
         })
       });
 
@@ -99,7 +99,7 @@
           }
         })
         // ModuleDriver.initCanves(detail)
-        ModuleDriver.update({ detail: detail })
+        c2i.update({ detail: detail })
       });
     })
   </script>

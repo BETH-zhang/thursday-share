@@ -7,7 +7,6 @@
 
  // webpack通用模块定义
  (function webpackUniversalModuleDefinition(global, factory, framework) {
-	// 除了浏览器环境，其他环境都不允许使用document等window对象
 	if (typeof exports === 'object' && typeof module === 'object') {
 		// CMD
     console.log('cmd');
@@ -29,114 +28,10 @@
     debugger
 		global[framework] = factory();
 	}
-
  })(this, function() {
-
-	var logger = console.log
-
-	var getProto = Object.getPrototypeOf;
-
-	var class2type = {};
-
-	var toString = class2type.toString;
-
-	var hasOwn = class2type.hasOwnProperty;
-
-	var fnToString = hasOwn.toString;
-
-	var ObjectFunctionString = fnToString.call( Object );
-
-	function isPlainObject(obj) {
-			var proto, Ctor;
-
-			// Detect obvious negatives
-			// 检测到明显的否定
-			// Use toString instead of jQuery.type to catch host objects
-			// 使用toString代替jQuery。类型来捕获宿主对象
-			if ( !obj || toString.call( obj ) !== "[object Object]" ) {
-				return false;
-			}
-
-			proto = getProto( obj );
-
-			// Objects with no prototype (e.g., `Object.create( null )`) are plain
-			if ( !proto ) {
-				return true;
-			}
-
-			// Objects with prototype are plain iff they were constructed by a global Object function
-			Ctor = hasOwn.call( proto, "constructor" ) && proto.constructor;
-			return typeof Ctor === "function" && fnToString.call( Ctor ) === ObjectFunctionString;
+	var _logger = function(value) {
+		console.log(value);
 	}
-
-	var _deepExtends = function() {
-			var options, name, src, copy, copyIsArray, clone,
-					target = arguments[ 0 ] || {},
-					i = 1,
-					length = arguments.length,
-					deep = false;
-
-			// Handle a deep copy situation
-			if ( typeof target === "boolean" ) {
-					deep = target;
-
-					// Skip the boolean and the target
-					target = arguments[ i ] || {};
-					i++;
-			}
-
-			// Handle case when target is a string or something (possible in deep copy)
-			if ( typeof target !== "object" && !isFunction( target ) ) {
-					target = {};
-			}
-
-			// Extend jQuery itself if only one argument is passed
-			if ( i === length ) {
-					target = this;
-					i--;
-			}
-
-			for ( ; i < length; i++ ) {
-					// Only deal with non-null/undefined values
-					if ( ( options = arguments[ i ] ) != null ) {
-
-							// Extend the base object
-							for ( name in options ) {
-									src = target[ name ];
-									copy = options[ name ];
-
-									// Prevent never-ending loop
-									if ( target === copy ) {
-											continue;
-									}
-
-									// Recurse if we're merging plain objects or arrays
-									if ( deep && copy && ( isPlainObject( copy ) ||
-											( copyIsArray = Array.isArray( copy ) ) ) ) {
-
-											if ( copyIsArray ) {
-													copyIsArray = false;
-													clone = src && Array.isArray( src ) ? src : [];
-
-											} else {
-													clone = src && isPlainObject( src ) ? src : {};
-											}
-
-											// Never move original objects, clone them
-											target[ name ] = jQuery.extend( deep, clone, copy );
-
-									// Don't bring in undefined values
-									} else if ( copy !== undefined ) {
-											target[ name ] = copy;
-									}
-							}
-					}
-			}
-
-			// Return the modified object
-			return target;
-	}
-
 	var _extends = Object.assign || function (target) {
 		for (var i = 1; i < arguments.length; i++) {
 				var source = arguments[i];
@@ -148,7 +43,6 @@
 		}
 		return target;
 	};
-	
 	var _formateDetail = function(data) {
 		var currentDataTmp = data.split("|");
 		var mc = currentDataTmp[0];
@@ -205,7 +99,6 @@
 			}
 		};
 		var __CONFIG__ = _extends({}, defaultConfig, config)
-		console.log(_extends({}, { name: 1, data: 2, age: { index: 0 } }, { name: 2 }, { age: { i: 0 } }))
 
 		// 初始化
 		var savepngbtn = document.getElementById("savepngbtn");
@@ -248,15 +141,14 @@
 				}
 				oCanvas.onmousemove = function(e) {
 					if (bMouseIsDown) {
-						self.onmousemoveLine(e);
-						// switch (changeCanvasBtn.value) {
-						// 	case "Line":
-						// 		self.onmousemoveLine(e);
-						// 		break;
-						// 	case "Move":
-						// 		self.onmousemoveMove(e);
-						// 		break;
-						// }
+						switch (changeCanvasBtn.value) {
+							case "Line":
+								self.onmousemoveLine(e);
+								break;
+							case "Move":
+								self.onmousemoveMove(e);
+								break;
+						}
 					}
 				}
 				oCanvas.onmouseup = function() {
@@ -276,15 +168,15 @@
 			},
 			recursionAsync: function(count, config, data) {
 				var self = this;
-				logger(count)
+				_logger(count)
 				if (count === 0) {
-					logger('All is Done!');
+					_logger('All is Done!');
 				}	else {
 					count -= 1;
 					var configData = _objectKeys(config);
 					var configDataCount = configData.length;
 					var key = configData[configDataCount - 1 - count];
-					logger(key, '---:key:');
+					_logger(key, '---:key:');
 					this.initTemplate(config[key], data[key], function() {
 						self.recursionAsync(count, config, data);
 					})
@@ -314,14 +206,14 @@
 				image.src = data || config.src;
 				// 解决图片跨域问题
 				image.setAttribute('crossOrigin', 'anonymous');
-				logger(image.src, '====img====');
+				_logger(image.src, '====img====');
 				image.onload = function() {
 					oCtx.drawImage(image, ...config.position, ...config.size);
 					if (_isFunction(callback)) {
 						callback()
 					}
 				}
-				logger(image.complete, '图片加载完成')
+				_logger(image.complete, '图片加载完成')
 			},
 			drawRect: function(config, data, callback) {
 				oCtx.fillStyle = config.fillStyle;
@@ -340,10 +232,10 @@
 			},
 			getCanvasXY: function(e) {
         var clientLeft = -30;
-				var clientTop = -30;
+        var clientTop = -30;
         return {
-          x: clientLeft + e.clientX,
-          y: clientTop + e.clientY,
+          x: clientLeft + e.clientX - common.getOffsetLeft(oCanvas) + document.body.scrollLeft,
+          y: clientTop + e.clientY - common.getOffsetTop(oCanvas) + window.screenTop,
         }
       },
       onmousemoveLine: function(e) {
@@ -356,7 +248,6 @@
         iLastY = iY;
       },
       onmousemoveMove: function(e) {
-				// 有问题，需要修复
         var iX = this.getCanvasXY(e).x;
         var iY = this.getCanvasXY(e).y;
         //先清除之前的然后重新绘制
@@ -364,7 +255,7 @@
         this.moveCanvas(iX, iY);
       },
       moveCanvas: function(x, y) {
-        logger(x, y)
+        _logger(x, y)
       },
       saveCanvas: function(pCanvas, strType) {
 				var bRes = false;
@@ -417,13 +308,13 @@
 		 },
 		 // 更新store数据
 		 update(data) {
-				logger(this.meta, this.config, data, '000')
+				_logger(this.meta, this.config, data, '000')
 				this.meta = _extends({}, this.meta, data);
 				this.load();
 		 },
 		 // 对外直接暴露修改canvas的接口
 		 initCanves: function(data) {
-			 logger(this.template, '===', this)
+			 _logger(this.template, '===', this)
 			 canvas(this.template).init(data);
 		 },
 	};
@@ -434,7 +325,7 @@
  			"view": undefined,
  			"data": undefined,
  			"refresh": function() {
-				 logger('detail', this.data)
+				 _logger('detail', this.data)
 				 __DRIVER__.initCanves(this.data)
  			}
  		},
@@ -442,7 +333,7 @@
  			"view": document.getElementById('shareList'),
  			"data": undefined,
  			"refresh": function() {
-				logger('---list渲染---')
+				_logger('---list渲染---')
  				var self = this;
 				var eleDiv = [];
 				this.data.forEach(function(item, index) {
@@ -457,7 +348,7 @@
 						if (self.data[btnIndex]) {
 							detail = _formateDetail(self.data[btnIndex]);
 						}
-						logger('current-detail', detail)
+						_logger('current-detail', detail)
 						__DRIVER__.initCanves(detail)
 					}
 				}

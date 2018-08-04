@@ -5,28 +5,33 @@
  * depend on canvas2image.js
  */
 
+/**
+ * 问题点：
+ * 1.如何组织模块驱动架构代码
+ * 2.如何抽离业务，提炼抽象层代码
+ * 3.如何处理不同环境调用的问题
+ * 4.如何处理深copy和浅copy的问题
+ * 5.如何暴露接口
+ */
+
  // webpack通用模块定义
  (function webpackUniversalModuleDefinition(global, factory, framework) {
 	// 除了浏览器环境，其他环境都不允许使用document等window对象
 	if (typeof exports === 'object' && typeof module === 'object') {
 		// CMD
     console.log('cmd');
-    debugger
 		module.exports = factory();
 	} else if (typeof define === 'function' && define.amd) {
 		// AMD
     console.log('amd');
-    debugger
 		define([], factory);
 	} else if (typeof exports === 'object') {
 		// Commonjs
     console.log('commonjs');
-    debugger
 		exports[framework] = factory();
 	} else {
 		// Window
     console.log('window', factory());
-    debugger
 		global[framework] = factory();
 	}
 
@@ -149,25 +154,11 @@
 		return target;
 	};
 	
-	var _formateDetail = function(data) {
-		var currentDataTmp = data.split("|");
-		var mc = currentDataTmp[0];
-		var title = currentDataTmp[1];
-		var subTitle = currentDataTmp[2];
-		var schedule = currentDataTmp[3];
-		var address = "海淀区大柳树富海大厦2号楼1102  Tad会议室";
-		return {
-			mc: mc,
-			title: title,
-			subTitle: subTitle,
-			schedule: schedule,
-			address: address
-		}
-	};
 	var _isFunction = function(value) {
 		return typeof value === 'function' &&
 					value instanceof Function
 	};
+
 	var _objectKeys = function(objs) {
 		var ary = [];
 		for (var key in objs) {
@@ -175,6 +166,11 @@
 		}
 		return ary;
 	}
+
+	var common = {
+		extend: _extends,
+		deepExtend: _deepExtends,
+	};
 	
 	// 定义画布函数
 	var canvas = function(config) {
@@ -207,11 +203,6 @@
 		var __CONFIG__ = _extends({}, defaultConfig, config)
 		console.log(_extends({}, { name: 1, data: 2, age: { index: 0 } }, { name: 2 }, { age: { i: 0 } }))
 
-		// 初始化
-		var savepngbtn = document.getElementById("savepngbtn");
-		var savebmpbtn = document.getElementById("savebmpbtn");
-		var savejpegbtn = document.getElementById("savejpegbtn");
-	
 		// 画图的状态
 		var bMouseIsDown = false;
 
@@ -235,9 +226,10 @@
 				this.recursionAsync(configDataCount, __CONFIG__.data, data)
 				// 使用async、await实现
 
-				// 初始化自定义画板
-				this.initPaintBoard();
+				// TODO:初始化自定义画板
+				// this.initPaintBoard();
 			},
+
 			initPaintBoard: function() {
 				var self = this;
 				// 在画布上画操作
@@ -248,6 +240,7 @@
 				}
 				oCanvas.onmousemove = function(e) {
 					if (bMouseIsDown) {
+						// TODO: 支持画图和内容移动
 						self.onmousemoveLine(e);
 						// switch (changeCanvasBtn.value) {
 						// 	case "Line":
@@ -264,21 +257,16 @@
 					iLastX = -1;
 					iLastY = -1;
 				}
-				savepngbtn.onclick = function() {
-					self.saveCanvas(oCanvas, "PNG");
-				}
-				savebmpbtn.onclick = function() {
-					self.saveCanvas(oCanvas, "BMP");
-				}
-				savejpegbtn.onclick = function() {
-					self.saveCanvas(oCanvas, "JPEG");
-				}
 			},
+
 			recursionAsync: function(count, config, data) {
 				var self = this;
 				logger(count)
 				if (count === 0) {
 					logger('All is Done!');
+					if (__CONFIG__.auto) {
+						this.downloadImg();
+					}
 				}	else {
 					count -= 1;
 					var configData = _objectKeys(config);
@@ -290,6 +278,7 @@
 					})
 				}
 			},
+
 			initTemplate: function(config, data, callback) {
 				switch(config.type) {
 					case 'image':
@@ -308,6 +297,7 @@
 						break;
 				}
 			},
+
 			drawImage: function(config, data, callback) {
 				var image = new Image();
 				// 图片必须的相同域名，如果是非本地的不能保存成功
@@ -323,6 +313,7 @@
 				}
 				logger(image.complete, '图片加载完成')
 			},
+
 			drawRect: function(config, data, callback) {
 				oCtx.fillStyle = config.fillStyle;
 				oCtx.fillRect(...config.position, ...config.size);
@@ -330,6 +321,7 @@
 					callback()
 				}
 			},
+
 			drawText: function(config, data, callback) {
 				oCtx.fillStyle = config.fillStyle;
 				oCtx.font = config.font;
@@ -338,6 +330,13 @@
 					callback()
 				}
 			},
+
+			downloadImg: function() {
+				if (['PNG', 'BMP', 'JPEG'].indexOf(__CONFIG__.type) !== -1) {
+					this.saveCanvas(oCanvas, __CONFIG__.type);
+				}
+			},
+
 			getCanvasXY: function(e) {
         var clientLeft = -30;
 				var clientTop = -30;
@@ -345,7 +344,8 @@
           x: clientLeft + e.clientX,
           y: clientTop + e.clientY,
         }
-      },
+			},
+			
       onmousemoveLine: function(e) {
         var iX = this.getCanvasXY(e).x;
         var iY = this.getCanvasXY(e).y;
@@ -354,7 +354,8 @@
         oCtx.stroke();
         iLastX = iX;
         iLastY = iY;
-      },
+			},
+			
       onmousemoveMove: function(e) {
 				// 有问题，需要修复
         var iX = this.getCanvasXY(e).x;
@@ -362,10 +363,12 @@
         //先清除之前的然后重新绘制
         oCtx.clearRect(0, 0, oCanvas.width, oCanvas.height);
         this.moveCanvas(iX, iY);
-      },
+			},
+			
       moveCanvas: function(x, y) {
         logger(x, y)
-      },
+			},
+			
       saveCanvas: function(pCanvas, strType) {
 				var bRes = false;
         if (strType == "PNG")
@@ -386,46 +389,73 @@
   // 模块驱动的对象
   var driver = {};
  	var __DRIVER__ = driver = {
- 		init: function({ data, config, template }) {
- 			// 初始化
+ 		init: function({ element, download, data, config, template }) {
+			// 初始化
+			// canvas的元素
+			this.element = element;
+			// 数据内容
 			this.meta = data;
+			// 模板引擎配置
 			this.config = config;
+			// 图片模板配置
 			this.template = template;
+			// 其他配置
+			this.download = {
+				type: download.type,
+				auto: download.auto,
+			};
+
  			// 加载数据
-			this.load();
- 		},
- 		load: function() {
+			this._load();
+		},
+		 
+ 		_load: function() {
 			// 重组数据
-			this.config = _extends({}, __MODULE__, this.config);
+			this.config = _deepExtends({}, __MODULE__, this.config);
  			// 分析填充数据
- 			this.fetch();
+ 			this._fetch();
  			// 驱动模块更新视图
- 			this.refresh();
- 		},
- 		fetch: function() {
+ 			this._refresh();
+		},
+		 
+ 		_fetch: function() {
  			for (var module in this.config) {
 				this.config[module].data = this.meta[module];
  			}
- 		},
- 		refresh: function() {
+		},
+		 
+ 		_refresh: function() {
  			for (var module in this.config) {
 				// 利用数据劫持去优化，数据没有修改的对象不进行view渲染
 				if (_isFunction(this.config[module].refresh)) {
 					this.config[module].refresh(); // 渲染模块
 				}
  			}
-		 },
-		 // 更新store数据
-		 update(data) {
-				logger(this.meta, this.config, data, '000')
-				this.meta = _extends({}, this.meta, data);
-				this.load();
-		 },
-		 // 对外直接暴露修改canvas的接口
-		 initCanves: function(data) {
-			 logger(this.template, '===', this)
-			 canvas(this.template).init(data);
-		 },
+		},
+
+		// 更新store数据
+		update(data) {
+			logger(this.meta, this.config, data, '000')
+			this.meta = _extends({}, this.meta, data);
+			this.load();
+		},
+
+		// 对外直接暴露修改canvas的接口
+		initCanves: function(data) {
+			this.canvas = canvas(this.element, this.template);
+			logger(this.template, '===', this)
+			this.template = _extends({}, this.template, this.download);
+			this.canvas.init(data);
+		},
+
+		// 下载图片
+	  download: function() {
+			if (this.canvas) {
+				this.canvas.downloadImg();
+			} else {
+				new Error('No picture can download');
+			}
+		}
 	};
 
  	// 模块引擎
@@ -438,32 +468,7 @@
 				 __DRIVER__.initCanves(this.data)
  			}
  		},
- 		"list": {
- 			"view": document.getElementById('shareList'),
- 			"data": undefined,
- 			"refresh": function() {
-				logger('---list渲染---')
- 				var self = this;
-				var eleDiv = [];
-				this.data.forEach(function(item, index) {
-					eleDiv.push(`<li>${item}<button class='btn btn-primary createImg' key='${index}'>生成图片</button></li>`);
-				});
-				this.view.innerHTML = eleDiv.join("");
-				var btns = document.getElementsByClassName('createImg');
-				for (var i = 0; i < btns.length; i++) {
-					btns[i].onclick = function() {
-						var btnIndex = this.getAttribute('key');
-						var detail = {};
-						if (self.data[btnIndex]) {
-							detail = _formateDetail(self.data[btnIndex]);
-						}
-						logger('current-detail', detail)
-						__DRIVER__.initCanves(detail)
-					}
-				}
- 			}
- 		},
  	};
 
- 	return driver;
+ 	return _extends(driver, common);
  }, 'c2i')

@@ -83,13 +83,60 @@
   <script src="./js/base64.js"></script>
   <script src="./js/canvas2image.js"></script>
   <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
-  <script type="text/javascript" src="./js/c2i.js?t=25"></script>
+  <script type="text/javascript" src="./js/c2i.js?t=40"></script>
   <script type="text/javascript">
     $(function() {
+      var formateDetail = function(data) {
+        var currentDataTmp = data.split("|");
+        var mc = currentDataTmp[0];
+        var title = currentDataTmp[1];
+        var subTitle = currentDataTmp[2];
+        var schedule = currentDataTmp[3];
+        var address = "海淀区大柳树富海大厦2号楼1102  Tad会议室";
+        return {
+          mc: mc,
+          title: title,
+          subTitle: subTitle,
+          schedule: schedule,
+          address: address
+        }
+      };
+
       $.getJSON("./js/data.json?t=4", function(data) {
         console.log(1, data);
         $.getJSON("./js/template1.json?t=2", function(template) {
-            c2i.init({ data, template });
+            c2i.init({
+              data,
+              config: {
+                "list": {
+                  "view": document.getElementById('shareList'),
+                  "refresh": function() {
+                    var self = this;
+                    var eleDiv = [];
+                    this.data.forEach(function(item, index) {
+                      eleDiv.push(`<li>${item}<button class='btn btn-primary createImg' key='${index}'>生成图片</button></li>`);
+                    });
+                    this.view.innerHTML = eleDiv.join("");
+                    var btns = document.getElementsByClassName('createImg');
+                    for (var i = 0; i < btns.length; i++) {
+                      btns[i].onclick = function() {
+                        var btnIndex = this.getAttribute('key');
+                        var detail = {};
+                        if (self.data[btnIndex]) {
+                          detail = formateDetail(self.data[btnIndex]);
+                        }
+                        c2i.initCanves(detail)
+                      }
+                    }
+                  }
+                },
+              },
+              template,
+              download: {
+                type: 'PNG',
+                auto: true,
+              },
+            });
         })
       });
 
@@ -102,9 +149,12 @@
             detail[$(input).attr('id')] = $(input).val();
           }
         })
-        // ModuleDriver.initCanves(detail)
         c2i.update({ detail: detail })
       });
+
+      $('#savepngbtn').click(function() {
+        c2i.download()
+      })
     })
   </script>
   </body>

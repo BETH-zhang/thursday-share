@@ -2,7 +2,7 @@
  * c2i 1.0.0-alpha
  * Copyright (c) 2018 Beth
  * ModuleDriver
- * depend on canvas2image.js
+ * depend on [base64.js, canvas2image.js]
  */
 
 /**
@@ -12,6 +12,7 @@
  * 3.如何处理不同环境调用的问题
  * 4.如何处理深copy和浅copy的问题
  * 5.如何暴露接口
+ * 6.如何将任意的html导出图片
  */
 
  // webpack通用模块定义
@@ -173,7 +174,7 @@
 	};
 	
 	// 定义画布函数
-	var canvas = function(config) {
+	var canvas = function(ele, config) {
 		var defaultConfig = {
 			width: 500,
 			height: 610,
@@ -201,13 +202,15 @@
 			}
 		};
 		var __CONFIG__ = _extends({}, defaultConfig, config)
-		console.log(_extends({}, { name: 1, data: 2, age: { index: 0 } }, { name: 2 }, { age: { i: 0 } }))
 
 		// 画图的状态
 		var bMouseIsDown = false;
 
 		// 初始化canvas的状态
-    var oCanvas = document.getElementById("mycanvas");
+		var oCanvas = ele;
+		if (!oCanvas) {
+			return new Error('必须传入获取canvasId的元素对象');
+		}
 		var oCtx = oCanvas.getContext("2d");
 		
 		return {
@@ -242,14 +245,14 @@
 					if (bMouseIsDown) {
 						// TODO: 支持画图和内容移动
 						self.onmousemoveLine(e);
-						// switch (changeCanvasBtn.value) {
-						// 	case "Line":
-						// 		self.onmousemoveLine(e);
-						// 		break;
-						// 	case "Move":
-						// 		self.onmousemoveMove(e);
-						// 		break;
-						// }
+						switch (changeCanvasBtn.value) {
+							case "Line":
+								self.onmousemoveLine(e);
+								break;
+							case "Move":
+								self.onmousemoveMove(e);
+								break;
+						}
 					}
 				}
 				oCanvas.onmouseup = function() {
@@ -280,7 +283,11 @@
 			},
 
 			initTemplate: function(config, data, callback) {
+				logger(config.type);
 				switch(config.type) {
+					case 'html':
+					  this.drawHtml(config, data, callback)
+						break;
 					case 'image':
 						this.drawImage(config, data, callback)
 						break;
@@ -296,6 +303,36 @@
 						}	
 						break;
 				}
+			},
+
+			drawHtml: function(config, data, callback) {
+				// 可以在这里实现一个小模板
+				var app = document.getElementById(config.id);
+				var style = getComputedStyle(app);
+				var ratio = window.devicePixelRatio
+				app.setAttribute('xmlns', 'http://www.w3.org/1999/xhtml');
+
+				var htmlWidth = Math.ceil(style.width.slice(0, -2));
+				var htmlHeight = Math.ceil(style.height.slice(0, -2)) + 15;
+				oCanvas.width = htmlWidth * ratio;
+				oCanvas.height = htmlHeight * ratio;
+				oCtx.scale(ratio, ratio);
+
+				// data:image/svg+xml 必须有
+				var svg = `data:image/svg+xml,
+					<svg xmlns="http://www.w3.org/2000/svg" width="${htmlWidth}" height="${htmlHeight}">
+						<foreignObject width="100%" height="100%">
+							${app.outerHTML} 
+						</foreignObject>
+					</svg>
+				`;
+				config = _extends({}, config, {
+					src: URL.createObjectURL(new Blob([svg], {
+						type: 'image/svg+xml'
+					})),
+					size: [htmlWidth, htmlHeight]
+				})
+				this.drawImage(config, data, callback);
 			},
 
 			drawImage: function(config, data, callback) {
@@ -331,9 +368,10 @@
 				}
 			},
 
-			downloadImg: function() {
-				if (['PNG', 'BMP', 'JPEG'].indexOf(__CONFIG__.type) !== -1) {
-					this.saveCanvas(oCanvas, __CONFIG__.type);
+			downloadImg: function(type) {
+				var imgType = type || __CONFIG__.type;
+				if (['PNG', 'BMP', 'JPEG', 'PNGHTML'].indexOf(imgType) !== -1) {
+					this.saveCanvas(oCanvas, imgType);
 				}
 			},
 
@@ -377,12 +415,13 @@
           bRes = Canvas2Image.saveAsBMP(oCanvas, false, this.data.title);
         if (strType == "JPEG")
           bRes = Canvas2Image.saveAsJPEG(oCanvas, false, this.data.title);
-    
+				if (strType == 'PNGHTML')
+					bRes = Canvas2Image.saveAsImg(oCanvas, false, this.data.title);
         if (!bRes) {
           alert("Sorry, this browser is not capable of saving " + strType + " files!");
           return false;
         }
-      }
+			},
 		}
 	}
 
@@ -445,13 +484,13 @@
 			this.canvas = canvas(this.element, this.template);
 			logger(this.template, '===', this)
 			this.template = _extends({}, this.template, this.download);
-			this.canvas.init(data);
+			this.canvas.init(data, this.template);
 		},
 
 		// 下载图片
-	  download: function() {
+	  downloadImg: function(type) {
 			if (this.canvas) {
-				this.canvas.downloadImg();
+				this.canvas.downloadImg(type);
 			} else {
 				new Error('No picture can download');
 			}

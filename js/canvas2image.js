@@ -191,6 +191,21 @@ var Canvas2Image = (function() {
 	}
 
 	return {
+		saveAsImg : function(oCanvas, bReturnImg, filename, iWidth, iHeight) {
+			if (!bHasDataURL) {
+				return false;
+			}
+			var type = 'png';
+			var imgData = oCanvas.toDataURL(type);
+			imgData = imgData.replace(_fixType(type), 'image/octet-stream');  // 二进制流
+
+			if (bReturnImg) {
+				return makeImageObject(strData);
+			} else {
+				saveFile(imgData, filename + ".png");
+			}
+			return true;	
+		},
 
 		saveAsPNG : function(oCanvas, bReturnImg, filename, iWidth, iHeight) {
 			if (!bHasDataURL) {

@@ -7,15 +7,27 @@
     <meta name="viewport" content="width=640, user-scalable=no, target-densitydpi=device-dpi">
     <link rel="stylesheet" href="./css/index.css?t=1">
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-
-    <!-- <link href='//cdn.webfont.youziku.com/webfonts/nomal/16396/46887/5af51422f629d9110cc2fa4c.css' rel='stylesheet' type='text/css' /> -->
-
   </head>
   <body>
     <div class="body">
-      <div id="app" style="display:inline-block; margin: 0; padding: 0; background: #000; color: #fff">
-        <h1>这里是HTML</h1>
+      <div id="html"></div>
+      <div id="app" style="display: inline-block">
+        <h1 id="app">HTML</h1>
+        <ul>
+          <li>
+              王贤|K8s|容器集群管理系统|2018年8月2日@周四@15:00-18:00
+              <button class="btn btn-primary createImg" key="0">生成图片</button>
+          </li>
+        </ul>
       </div>
+      <hr />
+      <p>
+        <input id="createsvgbtn" type="button" value="生成网页图片">
+        <input id="savesvgbtn" type="button" value="保存网页图片">
+        <input id="savepngbtn" type="button" value="保存PNG图片">
+        <input id="savebmpbtn" type="button" value="保存BMP图片">
+        <input id="savejpegbtn" type="button" value="保存JPEG图片">
+      </p>
       <hr />
       <div id="svg"></div> 
       <div class="ruler"></div>
@@ -47,18 +59,12 @@
         <br />
         <br />
         <canvas id="mycanvas" style="border: 30px solid #f2f2f2;">你的浏览器不支持画布技术，请使用谷歌浏览器/火狐浏览器或最新的IE9/10/11。</canvas>
-
-        <p>
-          <input id="savepngbtn" type="button" value="保存PNG图片">
-          <input id="savebmpbtn" type="button" value="保存BMP图片">
-          <input id="savejpegbtn" type="button" value="保存JPEG图片">
-        </p>
       </div>
       <div class="clear"></div>
   </div>
 
   <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
-  <script type="text/javascript" src="./js/c2i.js?t=72"></script>
+  <script type="text/javascript" src="./js/c2i.js?t=84"></script>
   <script type="text/javascript">
     $(function() {
       var formateDetail = function(data) {
@@ -78,12 +84,21 @@
         }
       };
 
-      $.getJSON("./js/data.json?t=4", function(data) {
+      $.getJSON("./js/data.json?t=5", function(data) {
         console.log(1, data);
-        $.getJSON("./js/template2.json?t=3", function(template) {
+        $.getJSON("./js/template1.json?t=3", function(template) {
             c2i.init({
               data,
               module: {
+                "html": {
+                  "view": document.getElementById('html'),
+                  "refresh": function() {
+                    var self = this;
+                    console.log(this.data)
+                    var ele = `<h1>${this.data.h1}</h1>`;
+                    this.view.innerHTML = ele;
+                  },
+                },
                 "list": {
                   "view": document.getElementById('shareList'),
                   "refresh": function() {
@@ -131,7 +146,24 @@
       });
 
       $('#savepngbtn').click(function() {
-        c2i.downloadImg('PNGHTML')
+        c2i.downloadImg('JPEG')
+      })
+
+      $('#createsvgbtn').click(function() {
+        $.getJSON("./js/template3.json?t=3", function(template) {
+          c2i.init({
+            element: document.getElementById('mycanvas'),
+            template,
+            download: {
+              type: 'SVG',
+              auto: false,
+            },
+          });
+        })
+      })
+
+      $('#savesvgbtn').click(function() {
+        c2i.downloadImg('SVG');
       })
     })
   </script>

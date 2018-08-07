@@ -2,7 +2,7 @@
  * c2i 1.0.0-alpha
  * Copyright (c) 2018 Beth
  * ModuleDriver
- * depend on [base64.js, canvas2image.js]
+ * no depend
  */
 
 /**
@@ -13,6 +13,7 @@
  * 4.如何处理深copy和浅copy的问题
  * 5.如何暴露接口
  * 6.如何将任意的html导出图片
+ * 7.处理不同格式的图片
  */
 
  // webpack通用模块定义
@@ -154,7 +155,7 @@
 		}
 		return target;
 	};
-	
+
 	var _isFunction = function(value) {
 		return typeof value === 'function' &&
 					value instanceof Function
@@ -168,12 +169,59 @@
 		return ary;
 	}
 
+  // 导出公共函数
 	var common = {
 		extend: _extends,
 		deepExtend: _deepExtends,
 	};
+
+	// 保存画布
+	var canvas2image = (function() {
+		var saveFile = function(data, filename) {
+			var save_link = document.createElementNS("http://www.w3.org/1999/xhtml", "a");
+			save_link.href = data;
+			save_link.download = filename;
+		
+			var event = document.createEvent("MouseEvents");
+			event.initMouseEvent("click", true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+			save_link.dispatchEvent(event);
+		}
+
+		var _fixType = function(type) {
+			type = type.toLowerCase().replace(/jpg/i, "jpeg");
+			var r = type.match(/png|jpeg|bmp|gif/)[0];
+			return "image/" + r;
+		}
+
+		return {
+			saveAsImg : function(oCanvas, filename) {
+				var type = 'png';
+				var imgData = oCanvas.toDataURL(type);
+				imgData = imgData.replace(_fixType(type), 'image/octet-stream');  // 二进制流
+				saveFile(imgData, filename + ".png");
+				return true;
+			},
 	
-	// 定义画布函数
+			saveAsPNG : function(oCanvas, filename) {
+				var strData = oCanvas.toDataURL("image/png");
+				saveFile(strData.replace("image/png", strDownloadMime), filename + ".png");
+				return true;
+			},
+	
+			saveAsJPEG : function(oCanvas, filename) {
+				var strMime = "image/jpeg";
+				var strData = oCanvas.toDataURL(strMime);
+
+				if (strData.indexOf(strMime) != 5) {
+					return false;
+				}
+				saveFile(strData.replace(strMime, strDownloadMime), filename + ".jpeg");
+				return true;
+			}
+		};
+	})()
+
+	// 创建画布
 	var canvas = function(ele, config) {
 		var defaultConfig = {
 			width: 500,
@@ -216,6 +264,8 @@
 		return {
 			init: function(data) {
 				this.data = data;
+
+				// 画布全局样式设置
 				oCanvas.width = __CONFIG__.width;
 				oCanvas.height = __CONFIG__.height;
 				var iWidth = oCanvas.width;
@@ -226,6 +276,7 @@
 				// 递归调用解决同步问题
 				var configData = _objectKeys(__CONFIG__.data);
 				var configDataCount = configData.length;
+
 				this.recursionAsync(configDataCount, __CONFIG__.data, data)
 				// 使用async、await实现
 
@@ -275,7 +326,7 @@
 					var configData = _objectKeys(config);
 					var configDataCount = configData.length;
 					var key = configData[configDataCount - 1 - count];
-					logger(key, '---:key:');
+					logger(key, '---:key:', config, data, key);
 					this.initTemplate(config[key], data[key], function() {
 						self.recursionAsync(count, config, data);
 					})
@@ -319,10 +370,10 @@
 				oCtx.scale(ratio, ratio);
 
 				// data:image/svg+xml 必须有
-				var svg = `data:image/svg+xml,
+				var svg = `
 					<svg xmlns="http://www.w3.org/2000/svg" width="${htmlWidth}" height="${htmlHeight}">
 						<foreignObject width="100%" height="100%">
-							${app.outerHTML} 
+							${app.outerHTML}
 						</foreignObject>
 					</svg>
 				`;
@@ -332,17 +383,20 @@
 					})),
 					size: [htmlWidth, htmlHeight]
 				})
+
 				this.drawImage(config, data, callback);
 			},
 
 			drawImage: function(config, data, callback) {
 				var image = new Image();
 				// 图片必须的相同域名，如果是非本地的不能保存成功
-				image.src = data || config.src;
+				image.src = data || config.src || '/images/logo.png';
+				console.log('src', image.src)
 				// 解决图片跨域问题
 				image.setAttribute('crossOrigin', 'anonymous');
 				logger(image.src, '====img====');
 				image.onload = function() {
+					logger(image, '===img=load===')
 					oCtx.drawImage(image, ...config.position, ...config.size);
 					if (_isFunction(callback)) {
 						callback()
@@ -370,7 +424,7 @@
 
 			downloadImg: function(type) {
 				var imgType = type || __CONFIG__.type;
-				if (['PNG', 'BMP', 'JPEG', 'PNGHTML'].indexOf(imgType) !== -1) {
+				if (['PNG', 'JPEG', 'PNGHTML'].indexOf(imgType) !== -1) {
 					this.saveCanvas(oCanvas, imgType);
 				}
 			},
@@ -410,13 +464,11 @@
       saveCanvas: function(pCanvas, strType) {
 				var bRes = false;
         if (strType == "PNG")
-          bRes = Canvas2Image.saveAsPNG(oCanvas, false, this.data.title);
-        if (strType == "BMP")
-          bRes = Canvas2Image.saveAsBMP(oCanvas, false, this.data.title);
+          bRes = canvas2image.saveAsPNG(oCanvas, this.data.title);
         if (strType == "JPEG")
-          bRes = Canvas2Image.saveAsJPEG(oCanvas, false, this.data.title);
+          bRes = canvas2image.saveAsJPEG(oCanvas, this.data.title);
 				if (strType == 'PNGHTML')
-					bRes = Canvas2Image.saveAsImg(oCanvas, false, this.data.title);
+					bRes = canvas2image.saveAsImg(oCanvas, this.data.title);
         if (!bRes) {
           alert("Sorry, this browser is not capable of saving " + strType + " files!");
           return false;
@@ -425,17 +477,17 @@
 		}
 	}
 
-  // 模块驱动的对象
+  // 模块驱动
   var driver = {};
  	var __DRIVER__ = driver = {
- 		init: function({ element, download, data, config, template }) {
+ 		init: function({ element, download, data, module, template }) {
 			// 初始化
 			// canvas的元素
 			this.element = element;
 			// 数据内容
 			this.meta = data;
 			// 模板引擎配置
-			this.config = config;
+			this.module = module;
 			// 图片模板配置
 			this.template = template;
 			// 其他配置
@@ -450,31 +502,33 @@
 		 
  		_load: function() {
 			// 重组数据
-			this.config = _deepExtends({}, __MODULE__, this.config);
+			this.module = _deepExtends({}, __MODULE__, this.module);
+
  			// 分析填充数据
- 			this._fetch();
+			this._fetch();
+			 
  			// 驱动模块更新视图
  			this._refresh();
 		},
 		 
  		_fetch: function() {
- 			for (var module in this.config) {
-				this.config[module].data = this.meta[module];
+ 			for (var key in this.module) {
+				this.module[key].data = this.meta[key];
  			}
 		},
 		 
  		_refresh: function() {
- 			for (var module in this.config) {
+ 			for (var key in this.module) {
 				// 利用数据劫持去优化，数据没有修改的对象不进行view渲染
-				if (_isFunction(this.config[module].refresh)) {
-					this.config[module].refresh(); // 渲染模块
+				if (_isFunction(this.module[key].refresh)) {
+					this.module[key].refresh(); // 渲染模块
 				}
  			}
 		},
 
 		// 更新store数据
 		update(data) {
-			logger(this.meta, this.config, data, '000')
+			logger(this.meta, this.module, data, '000')
 			this.meta = _extends({}, this.meta, data);
 			this.load();
 		},
@@ -509,5 +563,6 @@
  		},
  	};
 
+	// 导出模块Api
  	return _extends(driver, common);
  }, 'c2i')

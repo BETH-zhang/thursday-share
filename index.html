@@ -8,21 +8,13 @@
     <link rel="stylesheet" href="./css/index.css?t=1">
     <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
 
-    <link href='//cdn.webfont.youziku.com/webfonts/nomal/16396/46887/5af51422f629d9110cc2fa4c.css' rel='stylesheet' type='text/css' />
+    <!-- <link href='//cdn.webfont.youziku.com/webfonts/nomal/16396/46887/5af51422f629d9110cc2fa4c.css' rel='stylesheet' type='text/css' /> -->
 
   </head>
   <body>
     <div class="body">
-      <div id="app" style="display: inline-block; margin: 0; padding: 0; background: #000; color: #fff">
-        <h2>好了歌</h2>
-        <p>世人都晓神仙好，惟有功名忘不了！</p>
-        <p>古今将相在何方？荒冢一堆草没了。</p>
-        <p>世人都晓神仙好，只有金银忘不了！</p>
-        <p>终朝只恨聚无多，及到多时眼闭了。</p>
-        <p>世人都晓神仙好，只有娇妻忘不了！</p>
-        <p>君生日日说恩情，君死又随人去了。</p>
-        <p>世人都晓神仙好，只有儿孙忘不了！</p>
-        <p>痴心父母古来多，孝顺儿孙谁见了？</p>
+      <div id="app" style="display:inline-block; margin: 0; padding: 0; background: #000; color: #fff">
+        <h1>这里是HTML</h1>
       </div>
       <hr />
       <div id="svg"></div> 
@@ -63,13 +55,10 @@
         </p>
       </div>
       <div class="clear"></div>
-
   </div>
 
-  <script src="./js/base64.js"></script>
-  <script src="./js/canvas2image.js?t=5"></script>
   <script src="https://cdn.bootcss.com/jquery/3.3.1/jquery.js"></script>
-  <script type="text/javascript" src="./js/c2i.js?t=51"></script>
+  <script type="text/javascript" src="./js/c2i.js?t=72"></script>
   <script type="text/javascript">
     $(function() {
       var formateDetail = function(data) {
@@ -84,16 +73,17 @@
           title: title,
           subTitle: subTitle,
           schedule: schedule,
-          address: address
+          address: address,
+          cover: '/images/' + data + '.jpg'
         }
       };
 
       $.getJSON("./js/data.json?t=4", function(data) {
         console.log(1, data);
-        $.getJSON("./js/template3.json?t=3", function(template) {
+        $.getJSON("./js/template2.json?t=3", function(template) {
             c2i.init({
               data,
-              config: {
+              module: {
                 "list": {
                   "view": document.getElementById('shareList'),
                   "refresh": function() {
@@ -110,6 +100,7 @@
                         var detail = {};
                         if (self.data[btnIndex]) {
                           detail = formateDetail(self.data[btnIndex]);
+                          console.log(detail, '???')
                         }
                         c2i.initCanves(detail)
                       }

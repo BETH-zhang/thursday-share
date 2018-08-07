@@ -48,8 +48,10 @@
     url = URL.createObjectURL(new Blob([svg], {
       type: 'image/svg+xml' 
     }))
+    console.log(svg, 'url', url)
     img.src = url
     img.onload = function () {
+      console.log(img, 'img---');
       ctx.drawImage(img, 0, 0)
     }
   }

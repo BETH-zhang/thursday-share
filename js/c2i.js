@@ -14,14 +14,7 @@
  * 5.如何暴露接口
  * 6.如何将任意的html导出图片
  * 7.处理不同格式的图片
- * https://segmentfault.com/q/1010000009575243
  */
-
- /**
-	* 问题
-	2.this.load问题
-	3.data:image/svg+xml没有办法下载svg的图片
-  */
 
  // webpack通用模块定义
  (function webpackUniversalModuleDefinition(global, factory, framework) {
@@ -349,6 +342,7 @@
 				oCtx.scale(ratio, ratio);
 
 				// data:image/svg+xml 必须有
+				// data:image/svg+xml;base64,
 				var svg = `
 					<svg xmlns="http://www.w3.org/2000/svg" width="${htmlWidth}" height="${htmlHeight}">
 						<foreignObject width="100%" height="100%">
@@ -356,12 +350,13 @@
 						</foreignObject>
 					</svg>
 				`;
-				// blob:http://127.0.0.1:8081/10a239c3-90ba-4a5e-85cb-040e9bcc0de5
-				// blob:http://127.0.0.1:8081/4c1434a1-e765-4cf8-96e6-594c0b47902d
 				config = _extends({}, config, {
-					src: URL.createObjectURL(new Blob([svg], {
-						type: 'image/svg+xml'
-					})),
+					// 只能实现转换，下载有问题
+					// src: URL.createObjectURL(new Blob([svg], {
+					// 	type: 'image/svg+xml'
+					// })),
+					//给图片对象写入base64编码的svg流
+					src: 'data:image/svg+xml;base64,' + window.btoa(unescape(encodeURIComponent(svg))), 
 					size: [htmlWidth, htmlHeight]
 				})
 
@@ -413,11 +408,11 @@
       saveCanvas: function(pCanvas, strType) {
 				var bRes = false;
         if (strType == "PNG")
-          bRes = canvas2image.saveAsPNG(oCanvas, this.data.title);
+          bRes = canvas2image.saveAsPNG(oCanvas, this.data.title || (new Date()).getTime());
         if (strType == "JPEG")
-          bRes = canvas2image.saveAsJPEG(oCanvas, this.data.title);
+          bRes = canvas2image.saveAsJPEG(oCanvas, this.data.title || (new Date()).getTime());
 				if (strType == 'SVG')
-					bRes = canvas2image.saveAsImg(oCanvas, this.data.title);
+					bRes = canvas2image.saveAsImg(oCanvas, this.data.title || (new Date()).getTime());
         if (!bRes) {
           alert("Sorry, this browser is not capable of saving " + strType + " files!");
           return false;
